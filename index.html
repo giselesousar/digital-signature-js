@@ -12,29 +12,28 @@
 
 <body>
 
+    <div style="padding: 0 !important;" class="modal" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+        <div style=" max-width: 100% !important; height: 100%; margin: 0; padding: 0;" class="modal-dialog">
+          <div style="height: auto; min-height: 100%; border-radius: 0; background-color:rgba(255, 255, 255, .6); " class="modal-content">
+            <div style="display: flex; justify-content: center; align-items: center;" class="modal-body">
+                <h3>
+                    <span class="spinner-grow text-primary spinner-grow-lg" role="status" aria-hidden="true"></span>
+                    Loading...
+                </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
     <div class="container">
+        
         <div class="card mt-4">
             <div class="card-header">
                 <h4>Generate key pair</h4>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-3">
-                        <div class="btn-group mb-3">
-                            <button type="button" class="btn btn-light" disabled>Key size</button>
-                            <div class="dropdown">
-                                <button class="btn btn-outline-light text-dark dropdown-toggle" type="button"
-                                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">1024
-                                    bit</button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" data-value="512" href="#">512 bit</a></li>
-                                    <li><a class="dropdown-item" data-value="1024" href="#">1024 bit</a></li>
-                                    <li><a class="dropdown-item" data-value="2048" href="#">2048 bit</a></li>
-                                    <li><a class="dropdown-item" data-value="4096" href="#">4096 bit</a></li>
-                                </ul>
-                            </div>
-                        </div>
-
+                    <div class="col-md-3">
                         <div class="btn-group mb-3">
                             <button type="button" class="btn btn-light" disabled>Algorithm</button>
                             <div class="dropdown">
@@ -52,9 +51,25 @@
                                 </ul>
                             </div>
                         </div>
+
+                        <div class="btn-group mb-3">
+                            <button type="button" class="btn btn-light" disabled>Key size</button>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-light text-dark dropdown-toggle" type="button"
+                                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">1024
+                                    bit</button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" data-value="512" href="#">512 bit</a></li>
+                                    <li><a class="dropdown-item" data-value="1024" href="#">1024 bit</a></li>
+                                    <li><a class="dropdown-item" data-value="2048" href="#">2048 bit</a></li>
+                                    <li><a class="dropdown-item" data-value="4096" href="#">4096 bit</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
                         <button onclick="generatePrivateKeyAndCertificate()" href="#" class="btn btn-primary">Generate new keys</button>
                     </div>
-                    <div class="col-9">
+                    <div class="col-md-9">
                         <div class="row">
                             <div class="col mb-3">
                                 <label for="privateKeyTextarea" class="form-label">Private key</label>
@@ -78,20 +93,20 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col">
+                    <div class="col-md-6">
                         <div class="mb-3">
                             <label for="formFile" class="form-label"><h5>Select a file to sign</h5></label>
                             <input class="form-control" type="file" id="formFile">
                           </div>
                     </div>
-                    <div class="col">
+                    <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="formFile" class="form-label"><h5>Select the file with private key</h5></label>
+                            <label for="formFile" class="form-label"><h5>Select the file with private key (.pem)</h5></label>
                             <input class="form-control" type="file" id="formFile">
                           </div>
                     </div>
                 </div>
-                <div class="row-cols-6 text-center mt-3">
+                <div class="row-cols-md-6 text-center mt-3">
                     <a href="#" class="btn btn-primary">Sign</a>
                 </div>
             </div>
@@ -103,20 +118,20 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col">
+                    <div class="col-md-6">
                         <div class="mb-3">
                             <label for="formFile" class="form-label"><h5>Select a file to verify</h5></label>
                             <input class="form-control" type="file" id="formFile">
                           </div>
                     </div>
-                    <div class="col">
-                        <div class="col mb-3">
-                            <label for="exampleFormControlTextarea1" class="form-label">Insert the public key</label>
-                            <textarea style="resize: none;" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                        </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="formFile" class="form-label"><h5>Select the file with certificate (.pem)</h5></label>
+                            <input class="form-control" type="file" id="formFile">
+                          </div>
                     </div>
                 </div>
-                <div class="row-cols-6 text-center mt-3">
+                <div class="row-cols-md-6 text-center mt-3">
                     <a href="#" class="btn btn-primary">Verify</a>
                 </div>
             </div>
