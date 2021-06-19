@@ -52,18 +52,19 @@
                                 </ul>
                             </div>
                         </div>
-                        <a href="#" class="btn btn-primary">Generate new keys</a>
-                        <a href="#" class="btn btn-primary">Download</a>
+                        <button onclick="generatePrivateKeyAndCertificate()" href="#" class="btn btn-primary">Generate new keys</button>
                     </div>
                     <div class="col-9">
                         <div class="row">
                             <div class="col mb-3">
-                                <label for="exampleFormControlTextarea1" class="form-label">Private key</label>
-                                <textarea style="resize: none;" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                <label for="privateKeyTextarea" class="form-label">Private key</label>
+                                <textarea id="privateKeyTextarea" style="resize: none;" class="form-control" rows="5"></textarea>
+                                <a id="privateKeyButton" class="btn btn-primary mt-2">Download</a>
                             </div>
                             <div class="col mb-3">
-                                <label for="exampleFormControlTextarea1" class="form-label">Public key</label>
-                                <textarea style="resize: none;" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                <label for="certificateTextarea" class="form-label">Certificate</label>
+                                <textarea id="certificateTextarea" style="resize: none;" class="form-control" rows="5"></textarea>
+                                <a id="certificateButton" class="btn btn-primary mt-2">Download</a>
                             </div>
                         </div>
                     </div>
@@ -123,7 +124,7 @@
     </div>
 
     <!------ scripts ------->
-    <script src="./src/index.js"></script>
+    <script type="module" src="./src/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
         crossorigin="anonymous"></script>

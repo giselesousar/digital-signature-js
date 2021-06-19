@@ -31,9 +31,11 @@ const createHash = (hash) => {
 }
 
 const generateSelfSignCertificate = (algorithm, hash) => {
+
     let pki = forge.pki;
 
     const keys = generateKeyPair(algorithm);
+
     let cert = pki.createCertificate();
 
     cert.publicKey = keys.publicKey;
@@ -67,10 +69,6 @@ const generateSelfSignCertificate = (algorithm, hash) => {
     }
 }
 
-const verifySignature = () => {
-    
-}
-
 module.exports = {
-
+    generateSelfSignCertificate
 }
