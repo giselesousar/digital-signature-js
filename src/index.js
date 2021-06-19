@@ -2,8 +2,13 @@ const $ = require('jquery');
 import { generateSelfSignCertificate } from './crypto'
 
 const generatePrivateKeyAndCertificate = () => {
-  const values = generateSelfSignCertificate('rsa', 'sha1');
-  renderPrivateKeyandCertificate(values);
+  openLoading();
+  setTimeout(() => {
+    const values = generateSelfSignCertificate('rsa', 'sha1');
+    renderPrivateKeyandCertificate(values);
+    closeLoading();
+  }, 1000);
+
 };
 
 const renderPrivateKeyandCertificate = (values) => {
@@ -17,6 +22,14 @@ const renderPrivateKeyandCertificate = (values) => {
 const renderDownloadButton = (selector, filename, content) => {
   $(selector).attr('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
   $(selector).attr('download', filename);
+}
+
+const openLoading = () => {
+  $('#loadingModal').show();
+}
+
+const closeLoading = () => {
+  $('#loadingModal').hide()
 }
 
 window.onload = () => {
