@@ -98,7 +98,7 @@ async function signFileWithPrivateKey(file, privateKey, hashAlgorithm, padding, 
                 let pss = forge.pss.create({
                     md: createHash(hashAlgorithm),
                     mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
-                    saltLength: salt
+                    saltLength: parseInt(salt)
                 });
                 signature = forge.util.encode64(pk.sign(md, pss));
             }
@@ -120,7 +120,7 @@ async function signFileWithPrivateKey(file, privateKey, hashAlgorithm, padding, 
     }
 }
 
-async function verifySignature(file, signature, certificate, hashAlgorithm, padding, salt) {
+async function verifySignature(file, signature, certificate, hashAlgorithm, padding, encryptAlgoritm, salt) {
 
     file = await readFileAsync(file);
     let verified = null;
