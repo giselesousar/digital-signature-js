@@ -30,7 +30,7 @@ const signFile = async () => {
 
   openLoading();
   try {
-    const sigature = await signFileWithPrivateKey(fileToSign, privateKey, 'sha512', 'RSASSA-PSS');
+    const sigature = await signFileWithPrivateKey(fileToSign, privateKey, 'sha512', 'RSASSA-PSS', 'RSA', 20);
 
     alert('The file has been successfully signed.');
     renderDownloadButton('#signFileButton', 'fileSigned.txt', sigature);
@@ -45,7 +45,7 @@ const verify = async () => {
   const sig = readFile('#signatureInput');
   const cert = readFile('#certificateInput');
   try {
-    const result = await verifySignature(file, sig, cert, 'sha512', 'RSASSA-PSS');
+    const result = await verifySignature(file, sig, cert, 'sha512', 'RSASSA-PSS', 'RSA', 20);
     console.log(result);
   } catch (err) {
     alert('An error has occurred. Please, try again!');
