@@ -37,10 +37,10 @@
                             </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="btn-group mb-3">
                                 <button type="button" class="btn btn-light" disabled>
-                                    Key
+                                    Key size
                                 </button>
                                 <div class="col-md-8">
                                     <select id="keySizeSelect" class="form-select form-select-sm" aria-label="Default select example">
@@ -62,7 +62,7 @@
                                 <button type="button" class="btn btn-light" disabled>
                                     Hash Algorithm
                                 </button>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <select id="keyHashAlgorithm" class="form-select form-select-sm" aria-label="Default select example">
                                         <option value="sha1">sha1</option>
                                         <option value="sha256">sha256</option>
@@ -178,7 +178,9 @@
                             <button type="button" class="btn btn-light" disabled>
                                 Salt Length
                             </button>
-                            <input type="number" id="signSaltLength" min="1" max="490">
+                            <div class="col-md-4">
+                                <input class="form-control" type="number" id="signSaltLength" min="1" max="490">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -263,7 +265,9 @@
                             <button type="button" class="btn btn-light" disabled>
                                 Salt Length
                             </button>
-                            <input type="number" id="verifySaltLength" min="1" max="490">
+                            <div class="col-md-4">
+                                <input class="form-control" type="number" id="verifySaltLength" min="1" max="490">
+                            </div>
                         </div>
                     </div>
                     </div>
