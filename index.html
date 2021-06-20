@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <meta charset="utf-8" lang="es"/>
+    <meta charset="utf-8" lang="es" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Digital Signature</title>
     <script src="https://unpkg.com/lodash@4.17.20"></script>
@@ -38,7 +38,8 @@
                             <button type="button" class="btn btn-light" disabled>Algorithm</button>
                             <div class="dropdown">
                                 <button class="btn btn-outline-light text-dark dropdown-toggle" type="button"
-                                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">RSA</button>
+                                    id="dropdownMenuButton1" data-bs-toggle="dropdown"
+                                    aria-expanded="false">RSA</button>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" data-value="512" href="#">RSA</a></li>
                                     <li><a class="dropdown-item" data-value="1024" href="#">DSA</a></li>
@@ -73,12 +74,14 @@
                         <div class="row">
                             <div class="col mb-3">
                                 <label for="privateKeyTextarea" class="form-label">Private key</label>
-                                <textarea id="privateKeyTextarea" style="resize: none;" class="form-control" rows="5"></textarea>
+                                <textarea id="privateKeyTextarea" style="resize: none;" class="form-control"
+                                    rows="5"></textarea>
                                 <a id="privateKeyButton" class="btn btn-primary mt-2">Download</a>
                             </div>
                             <div class="col mb-3">
                                 <label for="certificateTextarea" class="form-label">Certificate</label>
-                                <textarea id="certificateTextarea" style="resize: none;" class="form-control" rows="5"></textarea>
+                                <textarea id="certificateTextarea" style="resize: none;" class="form-control"
+                                    rows="5"></textarea>
                                 <a id="certificateButton" class="btn btn-primary mt-2">Download</a>
                             </div>
                         </div>
@@ -95,19 +98,23 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="formFile" class="form-label"><h5>Select a file to sign</h5></label>
-                            <input class="form-control" type="file" id="formFile">
-                          </div>
+                            <label for="formFile" class="form-label">
+                                <h5>Select a file to sign</h5>
+                            </label>
+                            <input class="form-control" type="file" id="FileToSign"
+                                onchange="receiveFileToSign(this)">
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="formFile" class="form-label"><h5>Select the file with private key (.pem)</h5></label>
-                            <input class="form-control" type="file" id="formFile">
+                            <input class="form-control" type="file" id="PrivateKey" onchange="receivePrivateKey(this)">
                           </div>
                     </div>
                 </div>
                 <div class="row-cols-md-6 text-center mt-3">
-                    <a href="#" class="btn btn-primary">Sign</a>
+                    <a href="#" class="btn btn-primary" onclick="signFile()">Sign</a>
+                    <a id="signFileButton" class="btn btn-primary mt-2">Download</a>
                 </div>
             </div>
         </div>
@@ -120,9 +127,11 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="formFile" class="form-label"><h5>Select a file to verify</h5></label>
+                            <label for="formFile" class="form-label">
+                                <h5>Select a file to verify</h5>
+                            </label>
                             <input class="form-control" type="file" id="formFile">
-                          </div>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
