@@ -79,60 +79,68 @@ function generateSelfSignCertificate(algorithm, hash) {
     }
 }
 
-async function signFileWithPrivateKey(file, privateKey, hashAlgorithm) {
+async function signFileWithPrivateKey(file, privateKey, hashAlgorithm, padding) {
 
     file = await readFileAsync(file);
 
     try {
         filecontent = await readFileAsync(privateKey);
         const pk = forge.pki.privateKeyFromPem(filecontent);
-
-        let pss = forge.pss.create({
-            md: createHash(hashAlgorithm),
-            mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
-            saltLength: 20
-        });
+        let signature = null;
         let md = createHash(hashAlgorithm);
         md.update(file, "utf8");
 
-        let signature = forge.util.encode64(pk.sign(md, pss));
+        if (padding == 'RSASSA-PSS') { //usa o padding RSASSA-PSS
+            let pss = forge.pss.create({
+                md: createHash(hashAlgorithm),
+                mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
+                saltLength: 20
+            });
+            signature = forge.util.encode64(pk.sign(md, pss));
+        }
+        else { //usa o padding RSASSA PKCS#1 v1.5
+            signature = forge.util.encode64(pk.sign(md));
+        }
 
         return signature;
     }
     catch (error) {
-        throw error;
+        console.log(error);
     }
 }
 
-async function verifySignature(file, signature, certificate, hashAlgorithm) {
+async function verifySignature(file, signature, certificate, hashAlgorithm, padding) {
 
     file = await readFileAsync(file);
-
+    let verified = null;
     const sig = await readFileAsync(signature);
     const cert = await readFileAsync(certificate);
 
-    try {
+    const certFromPem = forge.pki.certificateFromPem(cert);
 
-        const certFromPem = forge.pki.certificateFromPem(cert);
+    md = createHash(hashAlgorithm);
+    md.update(file, "utf8");
 
+    if (padding == 'RSASSA-PSS') { //usa o padding RSASSA-PSS
         let pss = forge.pss.create({
             md: createHash(hashAlgorithm),
             mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
             saltLength: 20
         });
-        md = createHash(hashAlgorithm);
-        md.update(file, "utf8");
-
-        let verified = certFromPem.publicKey.verify(
+        verified = certFromPem.publicKey.verify(
             md.digest().getBytes(),
             forge.util.decode64(sig),
             pss
         );
-
-        return verified;
-    } catch (error) {
-        throw error;
     }
+    else {
+        verified = certFromPem.publicKey.verify(
+            md.digest().getBytes(),
+            forge.util.decode64(sig)
+        );
+    }
+
+    return verified;
 }
 
 function readFileAsync(file) {
