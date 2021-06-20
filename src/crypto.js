@@ -55,9 +55,7 @@ function generateSelfSignCertificate(keySize, certOptions) {
         cert.setIssuer(attrsIssuer);
 
         const md = createHash(certOptions.hash);
-
-        cert.md = md;
-
+        
         cert.sign(keys.privateKey, md);
 
         return {
