@@ -19,6 +19,8 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
+    "bootstrap": "^5.0.1",
+    "fs": "0.0.1-security",
     "jquery": "^3.6.0",
     "node-forge": "^0.10.0"
   }
