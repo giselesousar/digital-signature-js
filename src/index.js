@@ -5,8 +5,13 @@ var fileToSign = null;
 var privateKey = null;
 
 const generatePrivateKeyAndCertificate = () => {
-  const values = generateSelfSignCertificate('rsa', 'sha1');
-  renderPrivateKeyandCertificate(values);
+  openLoading();
+  setTimeout(() => {
+    const values = generateSelfSignCertificate('rsa', 'sha1');
+    renderPrivateKeyandCertificate(values);
+    closeLoading();
+  }, 1000);
+
 };
 
 const renderPrivateKeyandCertificate = (values) => {
@@ -33,6 +38,14 @@ const receivePrivateKey = (evt) => {
 const signFile = async () => {
   //talvez isso esteja errado, rever amanhã
   renderDownloadButton('#signFileButton', 'fileSigned.txt', await signFileWithPrivateKey(fileToSign, privateKey, 'sha1'));
+}
+
+const openLoading = () => {
+  $('#loadingModal').show();
+}
+
+const closeLoading = () => {
+  $('#loadingModal').hide()
 }
 
 window.onload = () => {
