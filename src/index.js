@@ -30,7 +30,7 @@ const signFile = async () => {
 
   openLoading();
   try {
-    const sigature = await signFileWithPrivateKey(fileToSign, privateKey, $('#hashAlgorithm').val(), $('#padding').val(),  $('#algorithm').val(), $('#saltLength').val());
+    const sigature = await signFileWithPrivateKey(fileToSign, privateKey, $('#hashAlgorithm').val(), $('#padding').val(), $('#algorithm').val(), $('#saltLength').val());
 
     alert('The file has been successfully signed.');
     renderDownloadButton('#signFileButton', 'fileSigned.txt', sigature);
@@ -65,8 +65,20 @@ const closeLoading = () => {
   $('#loadingModal').hide()
 }
 
+const hidePaddingAndSalt = () => {
+  if ($('#algorithm').val() != 'RSA') {
+    $('#saltSignDiv').hide();
+    $('#paddingSignDiv').hide();
+  }
+  else {
+    $('#saltSignDiv').show();
+    $('#paddingSignDiv').show();
+  }
+}
+
 window.onload = () => {
   window.generatePrivateKeyAndCertificate = generatePrivateKeyAndCertificate;
   window.signFile = signFile;
   window.verify = verify;
+  window.hidePaddingAndSalt = hidePaddingAndSalt;
 }

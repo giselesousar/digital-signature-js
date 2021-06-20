@@ -98,7 +98,7 @@ async function signFileWithPrivateKey(file, privateKey, hashAlgorithm, padding, 
                 let pss = forge.pss.create({
                     md: createHash(hashAlgorithm),
                     mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
-                    saltLength: parseInt(salt)
+                    saltLength: parseInt(salt || '20')
                 });
                 signature = forge.util.encode64(pk.sign(md, pss));
             }

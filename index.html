@@ -130,7 +130,7 @@
                                 Algorithm
                             </button>
                             <div class="col-md-6">
-                                <select id="algorithm" class="form-select form-select-sm"
+                                <select onchange="hidePaddingAndSalt()" id="algorithm" class="form-select form-select-sm"
                                     aria-label="Default select example">
                                     <option value="RSA">RSA</option>
                                     <option value="ED25519">ED25519</option>
@@ -138,7 +138,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div id="paddingSignDiv" class="col-md-3">
                         <div class="btn-group mb-3">
                             <button type="button" class="btn btn-light" disabled>
                                 Padding
@@ -152,7 +152,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div id="saltSignDiv" class="col-md-3">
                         <div class="btn-group mb-3">
                             <button type="button" class="btn btn-light" disabled>
                                 Salt Length
