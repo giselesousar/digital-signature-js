@@ -79,37 +79,38 @@ function generateSelfSignCertificate(algorithm, hash) {
     }
 }
 
-async function signFileWithPrivateKey(file, privateKey, hashAlgorithm, padding, saltLength, encodingScheme) {
+async function signFileWithPrivateKey(file, privateKey, hashAlgorithm, padding, encryptAlgoritm, salt) {
 
     file = await readFileAsync(file);
 
     try {
+        let signature = null;
+
         filecontent = await readFileAsync(privateKey);
         const pk = forge.pki.privateKeyFromPem(filecontent);
-        let signature = null;
+
         let md = createHash(hashAlgorithm);
         md.update(file, "utf8");
 
-        if (padding == 'RSASSA-PSS') { //usa o padding RSASSA-PSS
-            let pss = forge.pss.create({
-                md: createHash(hashAlgorithm),
-                mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
-                saltLength
-            });
+        if (encryptAlgoritm == 'RSA') {
 
-            if(encodingScheme === 'utf8'){
-                signature = forge.util.encodeUtf8(pk.sign(md, pss));
-            } else {
+            if (padding == 'RSASSA-PSS') { //usa o padding RSASSA-PSS
+                let pss = forge.pss.create({
+                    md: createHash(hashAlgorithm),
+                    mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
+                    saltLength: salt
+                });
                 signature = forge.util.encode64(pk.sign(md, pss));
             }
-
-        }
-        else { //usa o padding RSASSA PKCS#1 v1.5
-            if(encodingScheme === 'utf8'){
-                signature = forge.util.encodeUtf8(pk.sign(md));
-            } else {
-                signature = forge.util.encode64();
+            else { //usa o padding RSASSA PKCS#1 v1.5
+                signature = forge.util.encode64(pk.sign(md));
             }
+        }
+        else {
+            signature = forge.util.encode64(ED25519.sign({
+                md: md,
+                privateKey: pk
+            }));
         }
 
         return signature;
@@ -119,14 +120,7 @@ async function signFileWithPrivateKey(file, privateKey, hashAlgorithm, padding, 
     }
 }
 
-/**
- * 
- * @param {*} options object with file to verify, signature, certificate x.509,
- * hash algotithm used to sign, padding if rsa, salt lenght and encoding scheme
- * @returns 
- */
-
-async function verifySignature(file, signature, certificate, hashAlgorithm, padding, saltLength, encodingScheme) {
+async function verifySignature(file, signature, certificate, hashAlgorithm, padding, salt) {
 
     file = await readFileAsync(file);
     let verified = null;
@@ -138,38 +132,35 @@ async function verifySignature(file, signature, certificate, hashAlgorithm, padd
     md = createHash(hashAlgorithm);
     md.update(file, "utf8");
 
-    let decoded = null;
+    if (encryptAlgoritm == 'RSA') {
 
-        switch(encodingScheme) {
-            case 'base64':
-                decoded = forge.util.decode64(sig);
-            case 'utf8':
-                decoded = forge.util.decodeUtf8(sig);
+        if (padding == 'RSASSA-PSS') { //usa o padding RSASSA-PSS
+            let pss = forge.pss.create({
+                md: createHash(hashAlgorithm),
+                mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
+                saltLength: salt
+            });
+            verified = certFromPem.publicKey.verify(
+                md.digest().getBytes(),
+                forge.util.decode64(sig),
+                pss
+            );
         }
-
-
-    if (padding == 'RSASSA-PSS') { //usa o padding RSASSA-PSS
-        let pss = forge.pss.create({
-            md: createHash(hashAlgorithm),
-            mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
-            saltLength
-        });
-        md = createHash(hashAlgorithm);
-        md.update(file, "utf8");
-
-        console.log(decoded);
-        
-        verified = certFromPem.publicKey.verify(
-            md.digest().getBytes(),
-            decoded,
-            pss
-        );
+        else {
+            verified = certFromPem.publicKey.verify(
+                md.digest().getBytes(),
+                forge.util.decode64(sig)
+            );
+        }
     }
-    else { // padding RSASSA-PKCS1-V1_5
-        verified = certFromPem.publicKey.verify(
-            md.digest().getBytes(),
-            decoded
-        );
+    else {
+        verified = ED25519.verify({
+            md: md,
+            // node.js Buffer, Uint8Array, forge ByteBuffer, or binary string
+            signature: forge.util.decode64(sig),
+            // node.js Buffer, Uint8Array, forge ByteBuffer, or binary string
+            publicKey: certFromPem.publicKey
+        });
     }
 
     return verified;
