@@ -9,7 +9,7 @@ const generateKeyPair = (algorithm) => {
         default:
             return forge.pki.rsa.generateKeyPair();
     }
-    
+
 }
 
 const createHash = (hash) => {
@@ -69,6 +69,40 @@ const generateSelfSignCertificate = (algorithm, hash) => {
     }
 }
 
+async function signFileWithPrivateKey(file, privateKey, hashAlgorithm) {
+    const md = createHash(hashAlgorithm, 'utf8');
+    md.update(file);
+    var encrypted = null;
+
+    try {
+        filecontent = await readFileAsync(privateKey);
+        const pk = forge.pki.privateKeyFromPem(filecontent);
+        encrypted = pk.sign(md);
+
+        return encrypted;
+    }
+    catch (error) {
+    }
+}
+
+function readFileAsync(file) {
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+
+        reader.onload = function (evt) {
+            if (evt.target.readyState != 2) return;
+            if (evt.target.error) {
+                return;
+            }
+            resolve(evt.target.result);
+        };
+
+        reader.onerror = reject;
+        reader.readAsText(file);
+    })
+}
+
 module.exports = {
-    generateSelfSignCertificate
+    generateSelfSignCertificate,
+    signFileWithPrivateKey
 }
