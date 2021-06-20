@@ -29,29 +29,31 @@ const signFile = async () => {
   const privateKey = readFile('#PrivateKey');
 
   openLoading();
-  const sigature = await signFileWithPrivateKey(fileToSign, privateKey, 'sha512');
-  closeLoading();
+  try {
+    const sigature = await signFileWithPrivateKey(fileToSign, privateKey, 'sha512');
 
-  showSuccessAlert('The file has been successfully signed.');
-  renderDownloadButton('#signFileButton', 'fileSigned.txt', sigature);
+    alert('The file has been successfully signed.');
+    renderDownloadButton('#signFileButton', 'fileSigned.txt', sigature);
+  } catch (err) {
+    alert('An error has occurred. Please, try again!');
+  }
+  closeLoading();
 }
 
 const verify = async () => {
   const file = readFile('#fileInput');
   const sig = readFile('#signatureInput');
   const cert = readFile('#certificateInput');
-  const result = await verifySignature(file, sig, cert, 'sha512');
-  console.log(result);
+  try {
+    const result = await verifySignature(file, sig, cert, 'sha512');
+    console.log(result);
+  } catch (err) {
+    alert('An error has occurred. Please, try again!');
+  }
 }
 
 const readFile = (selector) => {
   return $(selector).prop('files')[0];
-}
-
-const showSuccessAlert = (message) => {
-  $('#successAlert').val(message);
-  $('#successAlert').show();
-
 }
 
 const openLoading = () => {
@@ -66,5 +68,4 @@ window.onload = () => {
   window.generatePrivateKeyAndCertificate = generatePrivateKeyAndCertificate;
   window.signFile = signFile;
   window.verify = verify;
-  window.showSuccessAlert = showSuccessAlert;
 }

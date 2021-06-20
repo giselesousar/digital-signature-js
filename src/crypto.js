@@ -1,18 +1,22 @@
 const forge = require('node-forge');
 
-const generateKeyPair = (algorithm) => {
-    switch (algorithm) {
-        case 'rsa':
-            return forge.pki.rsa.generateKeyPair();
-        case 'ed25519':
-            return forge.pki.ed25519.generateKeyPair();
-        default:
-            return forge.pki.rsa.generateKeyPair();
+function generateKeyPair(algorithm) {
+    try {
+        switch (algorithm) {
+            case 'rsa':
+                return forge.pki.rsa.generateKeyPair();
+            case 'ed25519':
+                return forge.pki.ed25519.generateKeyPair();
+            default:
+                return forge.pki.rsa.generateKeyPair();
+        }
+    } catch (error) {
+        throw error;
     }
 
 }
 
-const createHash = (hash) => {
+function createHash(hash) {
     const md = forge.md;
     switch (hash) {
         case 'sha1':
@@ -30,44 +34,48 @@ const createHash = (hash) => {
     }
 }
 
-const generateSelfSignCertificate = (algorithm, hash) => {
+function generateSelfSignCertificate(algorithm, hash) {
 
     let pki = forge.pki;
 
-    const keys = generateKeyPair(algorithm);
+    try {
+        const keys = generateKeyPair(algorithm);
 
-    let cert = pki.createCertificate();
+        let cert = pki.createCertificate();
 
-    cert.publicKey = keys.publicKey;
-    cert.serialNumber = '01';
-    cert.validity.notBefore = new Date('06-19-2021');
-    cert.validity.notAfter = new Date('06-21-2021');
-    var attrsSubject = [{
-        name: 'commonName',
-        value: 'Client'
-    }, {
-        name: 'organizationName',
-        value: 'Client'
-    }];
-    var attrsIssuer = [{
-        name: 'commonName',
-        value: 'Self sign certificate'
-    }, {
-        name: 'organizationName',
-        value: 'Self sign certificate'
-    }];
-    cert.setSubject(attrsSubject);
-    cert.setIssuer(attrsIssuer);
+        cert.publicKey = keys.publicKey;
+        cert.serialNumber = '01';
+        cert.validity.notBefore = new Date('06-19-2021');
+        cert.validity.notAfter = new Date('06-21-2021');
+        var attrsSubject = [{
+            name: 'commonName',
+            value: 'Client'
+        }, {
+            name: 'organizationName',
+            value: 'Client'
+        }];
+        var attrsIssuer = [{
+            name: 'commonName',
+            value: 'Self sign certificate'
+        }, {
+            name: 'organizationName',
+            value: 'Self sign certificate'
+        }];
+        cert.setSubject(attrsSubject);
+        cert.setIssuer(attrsIssuer);
 
-    const md = createHash(hash);
+        const md = createHash(hash);
 
-    cert.md = md;
+        cert.md = md;
 
-    cert.sign(keys.privateKey, md);
+        cert.sign(keys.privateKey, md);
 
-    return {
-        certificate: pki.certificateToPem(cert),
-        privateKey: pki.privateKeyToPem(keys.privateKey)
+        return {
+            certificate: pki.certificateToPem(cert),
+            privateKey: pki.privateKeyToPem(keys.privateKey)
+        }
+    } catch (error) {
+        throw error;
     }
 }
 
@@ -92,7 +100,7 @@ async function signFileWithPrivateKey(file, privateKey, hashAlgorithm) {
         return signature;
     }
     catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -103,23 +111,28 @@ async function verifySignature(file, signature, certificate, hashAlgorithm) {
     const sig = await readFileAsync(signature);
     const cert = await readFileAsync(certificate);
 
-    const certFromPem = forge.pki.certificateFromPem(cert);
+    try {
 
-    let pss = forge.pss.create({
-        md: createHash(hashAlgorithm),
-        mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
-        saltLength: 20
-    });
-    md = createHash(hashAlgorithm);
-    md.update(file, "utf8");
-    
-    let verified = certFromPem.publicKey.verify(
-        md.digest().getBytes(),
-        forge.util.decode64(sig),
-        pss
-    );
+        const certFromPem = forge.pki.certificateFromPem(cert);
 
-    return verified;
+        let pss = forge.pss.create({
+            md: createHash(hashAlgorithm),
+            mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
+            saltLength: 20
+        });
+        md = createHash(hashAlgorithm);
+        md.update(file, "utf8");
+
+        let verified = certFromPem.publicKey.verify(
+            md.digest().getBytes(),
+            forge.util.decode64(sig),
+            pss
+        );
+
+        return verified;
+    } catch (error) {
+        throw error;
+    }
 }
 
 function readFileAsync(file) {
