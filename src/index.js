@@ -2,9 +2,14 @@ const $ = require('jquery');
 import { generateSelfSignCertificate, signFileWithPrivateKey, verifySignature } from './crypto'
 
 const generatePrivateKeyAndCertificate = () => {
+  const keySize = $('#keySizeSelect').find(':selected').val();
+  const hash = $('#keyHashAlgorithm').find(':selected').val();
+  const notBefore = $('#notBefore').val();
+  const notAfter = $('#notAfter').val();
+
   openLoading();
   setTimeout(() => {
-    const values = generateSelfSignCertificate('rsa', 'sha1');
+    const values = generateSelfSignCertificate(keySize, { hash, notBefore, notAfter });
     renderPrivateKeyandCertificate(values);
     closeLoading();
   }, 500);
@@ -30,7 +35,7 @@ const signFile = async () => {
 
   openLoading();
   try {
-    const sigature = await signFileWithPrivateKey(fileToSign, privateKey, $('#hashAlgorithm').val(), $('#padding').val(), $('#algorithm').val(), $('#saltLength').val());
+    const sigature = await signFileWithPrivateKey(fileToSign, privateKey, $('#signHashAlgorithm').find(":selected").val(), $('#signPadding').find(":selected").val(), $('#signSaltLength').val(), $('#signEncode').find(":selected").val());
 
     alert('The file has been successfully signed.');
     renderDownloadButton('#signFileButton', 'fileSigned.txt', sigature);
@@ -45,10 +50,12 @@ const verify = async () => {
   const sig = readFile('#signatureInput');
   const cert = readFile('#certificateInput');
   try {
-    const result = await verifySignature(file, sig, cert, 'sha512', 'RSASSA-PSS', 'RSA', 20);
-    console.log(result);
+    const result = await verifySignature(file, sig, cert, $('#verifyHashAlgorithm').find(":selected").val(), $('#verifyPadding').find(":selected").val(), $('#verifySaltLength').val(), $('#verifyDecode').find(":selected").val());
+    result ?
+      alert("Valid signature")
+    :
+      alert("Invalid signature")
   } catch (err) {
-    console.log(err);
     alert('An error has occurred. Please, try again!');
   }
 }

@@ -1,21 +1,5 @@
 const forge = require('node-forge');
 
-function generateKeyPair(algorithm) {
-    try {
-        switch (algorithm) {
-            case 'rsa':
-                return forge.pki.rsa.generateKeyPair();
-            case 'ed25519':
-                return forge.pki.ed25519.generateKeyPair();
-            default:
-                return forge.pki.rsa.generateKeyPair();
-        }
-    } catch (error) {
-        throw error;
-    }
-
-}
-
 function createHash(hash) {
     const md = forge.md;
     switch (hash) {
@@ -33,20 +17,26 @@ function createHash(hash) {
             return md.sha1.create();
     }
 }
-
-function generateSelfSignCertificate(algorithm, hash) {
+/**
+ * certOptions = {
+ *  hash,
+ *  notBefore,
+ *  notAfter
+ * }
+ */
+function generateSelfSignCertificate(keySize, certOptions) {
 
     let pki = forge.pki;
 
     try {
-        const keys = generateKeyPair(algorithm);
+        const keys = pki.rsa.generateKeyPair(Number(keySize));
 
         let cert = pki.createCertificate();
 
         cert.publicKey = keys.publicKey;
         cert.serialNumber = '01';
-        cert.validity.notBefore = new Date('06-19-2021');
-        cert.validity.notAfter = new Date('06-21-2021');
+        cert.validity.notBefore = certOptions?.notBefore ? new Date(certOptions.notBefore) : new Date();
+        cert.validity.notAfter = certOptions?.notAfter ? new Date(certOptions.notAfter) : new Date();
         var attrsSubject = [{
             name: 'commonName',
             value: 'Client'
@@ -64,7 +54,7 @@ function generateSelfSignCertificate(algorithm, hash) {
         cert.setSubject(attrsSubject);
         cert.setIssuer(attrsIssuer);
 
-        const md = createHash(hash);
+        const md = createHash(certOptions.hash);
 
         cert.md = md;
 
@@ -79,7 +69,7 @@ function generateSelfSignCertificate(algorithm, hash) {
     }
 }
 
-async function signFileWithPrivateKey(file, privateKey, hashAlgorithm, padding, encryptAlgoritm, salt) {
+async function signFileWithPrivateKey(file, privateKey, hashAlgorithm, padding, salt, encode) {
 
     file = await readFileAsync(file);
 
@@ -92,35 +82,32 @@ async function signFileWithPrivateKey(file, privateKey, hashAlgorithm, padding, 
         let md = createHash(hashAlgorithm);
         md.update(file, "utf8");
 
-        if (encryptAlgoritm == 'RSA') {
-
-            if (padding == 'RSASSA-PSS') { //usa o padding RSASSA-PSS
-                let pss = forge.pss.create({
-                    md: createHash(hashAlgorithm),
-                    mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
-                    saltLength: parseInt(salt || '20')
-                });
-                signature = forge.util.encode64(pk.sign(md, pss));
-            }
-            else { //usa o padding RSASSA PKCS#1 v1.5
-                signature = forge.util.encode64(pk.sign(md));
-            }
+        if (padding == 'RSASSA-PSS') { //usa o padding RSASSA-PSS
+            let pss = forge.pss.create({
+                md: createHash(hashAlgorithm),
+                mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
+                saltLength: parseInt(salt || '20')
+            });
+            encode === "base64" ?
+            signature = forge.util.encode64(pk.sign(md, pss))
+            :
+            signature = forge.util.encodeUtf8(pk.sign(md, pss))
         }
-        else {
-            signature = forge.util.encode64(ED25519.sign({
-                md: md,
-                privateKey: pk
-            }));
+        else { //usa o padding RSASSA PKCS#1 v1.5
+            encode === "base64" ?
+            signature = forge.util.encode64(pk.sign(md))
+            :
+            signature = forge.util.encodeUtf8(pk.sign(md))
         }
 
         return signature;
     }
     catch (error) {
-        console.log(error);
+        alert('An error has occurred. Please, try again!');
     }
 }
 
-async function verifySignature(file, signature, certificate, hashAlgorithm, padding, encryptAlgoritm, salt) {
+async function verifySignature(file, signature, certificate, hashAlgorithm, padding, salt, decode) {
 
     file = await readFileAsync(file);
     let verified = null;
@@ -132,35 +119,36 @@ async function verifySignature(file, signature, certificate, hashAlgorithm, padd
     md = createHash(hashAlgorithm);
     md.update(file, "utf8");
 
-    if (encryptAlgoritm == 'RSA') {
-
-        if (padding == 'RSASSA-PSS') { //usa o padding RSASSA-PSS
-            let pss = forge.pss.create({
-                md: createHash(hashAlgorithm),
-                mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
-                saltLength: salt
-            });
-            verified = certFromPem.publicKey.verify(
-                md.digest().getBytes(),
-                forge.util.decode64(sig),
-                pss
-            );
-        }
-        else {
-            verified = certFromPem.publicKey.verify(
-                md.digest().getBytes(),
-                forge.util.decode64(sig)
-            );
-        }
+    if (padding == 'RSASSA-PSS') { //usa o padding RSASSA-PSS
+        let pss = forge.pss.create({
+            md: createHash(hashAlgorithm),
+            mgf: forge.mgf.mgf1.create(createHash(hashAlgorithm)),
+            saltLength: parseInt(salt || '20')
+        });
+        decode === "base64" ?
+        verified = certFromPem.publicKey.verify(
+            md.digest().getBytes(),
+            forge.util.decode64(sig),
+            pss
+        )
+        :
+        verified = certFromPem.publicKey.verify(
+            md.digest().getBytes(),
+            forge.util.decodeUtf8(sig),
+            pss
+        )
     }
     else {
-        verified = ED25519.verify({
-            md: md,
-            // node.js Buffer, Uint8Array, forge ByteBuffer, or binary string
-            signature: forge.util.decode64(sig),
-            // node.js Buffer, Uint8Array, forge ByteBuffer, or binary string
-            publicKey: certFromPem.publicKey
-        });
+        decode === "base64" ?
+        verified = certFromPem.publicKey.verify(
+            md.digest().getBytes(),
+            forge.util.decode64(sig)
+        )
+        :
+        verified = certFromPem.publicKey.verify(
+            md.digest().getBytes(),
+            forge.util.decodeUtf8(sig)
+        )
     }
 
     return verified;

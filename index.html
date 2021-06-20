@@ -15,84 +15,105 @@
 
 <body>
     <div class="container">
+        <div id="verifyAlert">
+
+        </div>
         <div class="card mt-4">
             <div class="card-header">
                 <h4>Generate key pair</h4>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="btn-group mb-3">
-                            <button type="button" class="btn btn-light" disabled>
-                                Algorithm
-                            </button>
-                            <div class="dropdown">
-                                <button class="btn btn-outline-light text-dark dropdown-toggle" type="button"
-                                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="btn-group mb-3">
+                                <button type="button" class="btn btn-light" disabled>
+                                    Algorithm
+                                </button>
+                                <div class="col-md-6">
+                                <button type="button" class="btn btn-light" disabled>
                                     RSA
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item" data-value="512" href="#">RSA</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" data-value="1024" href="#">DSA</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" data-value="2048" href="#">EC</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" data-value="4096" href="#">ED25519</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" data-value="4096" href="#">ED448</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" data-value="4096" href="#">X25519</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" data-value="4096" href="#">X448</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" data-value="4096" href="#">DH</a>
-                                    </li>
-                                </ul>
+                            </div>
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
+                        <div class="col-md-3">
+                            <div class="btn-group mb-3">
                                 <button type="button" class="btn btn-light" disabled>
-                                    Key size
+                                    Key
                                 </button>
+                                <div class="col-md-8">
+                                    <select id="keySizeSelect" class="form-select form-select-sm" aria-label="Default select example">
+                                        <option value="512" selected>512 bit</option>
+                                        <option value="1024">1024 bit</option>
+                                        <option value="2048">2048 bit</option>
+                                        <option value="4096">4096 bit</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <select class="form-select form-select-sm" aria-label="Default select example">
-                                    <option selected>512 bit</option>
-                                    <option value="1">1024 bit</option>
-                                    <option value="2">2048 bit</option>
-                                    <option value="3">4096 bit</option>
-                                </select>
-                            </div>
-
                         </div>
 
-                        <button onclick="generatePrivateKeyAndCertificate()" href="#" class="btn btn-primary">
-                            Generate new keys
-                        </button>
+                        <hr class="mt-3"/>
+
+                        <h6>Certificate options</h6>
+
+                        <div class="col-md-3">
+                            <div class="btn-group mb-3">
+                                <button type="button" class="btn btn-light" disabled>
+                                    Hash Algorithm
+                                </button>
+                                <div class="col-md-6">
+                                    <select id="keyHashAlgorithm" class="form-select form-select-sm" aria-label="Default select example">
+                                        <option value="sha1">sha1</option>
+                                        <option value="sha256">sha256</option>
+                                        <option value="sha384">sha384</option>
+                                        <option value="sha512">sha512</option>
+                                        <option value="md5">md5</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="btn-group mb-3">
+                                <button type="button" class="btn btn-light" disabled>
+                                    Not before
+                                </button>
+                                <div class="col-md-6">
+                                    <input id="notBefore" type="date">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="btn-group mb-3">
+                                <button type="button" class="btn btn-light" disabled>
+                                    Not after
+                                </button>
+                                <div class="col-md-6">
+                                    <input id="notAfter" type="date">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row-cols-md-6 mb-3 mt-3">
+                            <button onclick="generatePrivateKeyAndCertificate()" href="#" class="btn btn-primary">
+                                Generate new keys
+                            </button> 
+                        </div>
                     </div>
-                    <div class="col-md-9">
+                    <div class="row">
                         <div class="row">
                             <div class="col mb-3">
                                 <label for="privateKeyTextarea" class="form-label">Private key</label>
                                 <textarea id="privateKeyTextarea" style="resize: none" class="form-control"
-                                    rows="5"></textarea>
+                                    rows="8"></textarea>
                                 <a id="privateKeyButton" class="btn btn-primary mt-2">Download</a>
                             </div>
                             <div class="col mb-3">
                                 <label for="certificateTextarea" class="form-label">Certificate</label>
                                 <textarea id="certificateTextarea" style="resize: none" class="form-control"
-                                    rows="5"></textarea>
+                                    rows="8"></textarea>
                                 <a id="certificateButton" class="btn btn-primary mt-2">Download</a>
                             </div>
                         </div>
@@ -113,7 +134,7 @@
                                 Hash Algorithm
                             </button>
                             <div class="col-md-6">
-                                <select id="hashAlgorithm" class="form-select form-select-sm"
+                                <select id="signHashAlgorithm" class="form-select form-select-sm"
                                     aria-label="Default select example">
                                     <option value="sha1">sha1</option>
                                     <option value="sha256">sha256</option>
@@ -124,30 +145,30 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="btn-group mb-3">
-                            <button type="button" class="btn btn-light" disabled>
-                                Algorithm
-                            </button>
-                            <div class="col-md-6">
-                                <select onchange="hidePaddingAndSalt()" id="algorithm" class="form-select form-select-sm"
-                                    aria-label="Default select example">
-                                    <option value="RSA">RSA</option>
-                                    <option value="ED25519">ED25519</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
                     <div id="paddingSignDiv" class="col-md-3">
                         <div class="btn-group mb-3">
                             <button type="button" class="btn btn-light" disabled>
                                 Padding
                             </button>
-                            <div class="col-md-6">
-                                <select id="padding" class="form-select form-select-sm"
+                            <div class="col-md-8">
+                                <select id="signPadding" class="form-select form-select-sm"
                                     aria-label="Default select example">
                                     <option value="RSASSA-PSS">RSASSA-PSS</option>
                                     <option value="RSASSA-PKCS">RSASSA-PKCS</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="btn-group mb-3">
+                            <button type="button" class="btn btn-light" disabled>
+                                Encode
+                            </button>
+                            <div class="col-md-8">
+                                <select id="signEncode" class="form-select form-select-sm"
+                                    aria-label="Default select example">
+                                    <option value="base64">base64</option>
+                                    <option value="utf-8">utf-8</option>
                                 </select>
                             </div>
                         </div>
@@ -157,7 +178,7 @@
                             <button type="button" class="btn btn-light" disabled>
                                 Salt Length
                             </button>
-                            <input type="number" id="saltLength" min="1" max="490">
+                            <input type="number" id="signSaltLength" min="1" max="490">
                         </div>
                     </div>
                 </div>
@@ -192,35 +213,95 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="formFile" class="form-label">
-                                <h5>Select a file to verify</h5>
-                            </label>
-                            <input class="form-control" type="file" id="fileInput" />
+                    <div class="col-md-3">
+                        <div class="btn-group mb-3">
+                            <button type="button" class="btn btn-light" disabled>
+                                Hash Algorithm
+                            </button>
+                            <div class="col-md-6">
+                                <select id="verifyHashAlgorithm" class="form-select form-select-sm"
+                                    aria-label="Default select example">
+                                    <option value="sha1">sha1</option>
+                                    <option value="sha256">sha256</option>
+                                    <option value="sha384">sha384</option>
+                                    <option value="sha512">sha512</option>
+                                    <option value="md5">md5</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="formFile" class="form-label">
-                                <h5>Select a file with signature</h5>
-                            </label>
-                            <input class="form-control" type="file" id="signatureInput" />
+                    <div id="paddingSignDiv" class="col-md-3">
+                        <div class="btn-group mb-3">
+                            <button type="button" class="btn btn-light" disabled>
+                                Padding
+                            </button>
+                            <div class="col-md-8">
+                                <select id="verifyPadding" class="form-select form-select-sm"
+                                    aria-label="Default select example">
+                                    <option value="RSASSA-PSS">RSASSA-PSS</option>
+                                    <option value="RSASSA-PKCS">RSASSA-PKCS</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="formFile" class="form-label">
-                                <h5>Select the file with certificate (.pem)</h5>
-                            </label>
-                            <input class="form-control" type="file" id="certificateInput" />
+                    <div class="col-md-3">
+                        <div class="btn-group mb-3">
+                            <button type="button" class="btn btn-light" disabled>
+                                Decode
+                            </button>
+                            <div class="col-md-8">
+                                <select id="verifyDecode" class="form-select form-select-sm"
+                                    aria-label="Default select example">
+                                    <option value="base64">base64</option>
+                                    <option value="utf-8">utf-8</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div id="saltSignDiv" class="col-md-3">
+                        <div class="btn-group mb-3">
+                            <button type="button" class="btn btn-light" disabled>
+                                Salt Length
+                            </button>
+                            <input type="number" id="verifySaltLength" min="1" max="490">
+                        </div>
+                    </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="formFile" class="form-label">
+                                    <h5>Select a file to verify</h5>
+                                </label>
+                                <input class="form-control" type="file" id="fileInput" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="formFile" class="form-label">
+                                    <h5>Select a file with signature</h5>
+                                </label>
+                                <input class="form-control" type="file" id="signatureInput" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="formFile" class="form-label">
+                                    <h5>Select the file with certificate (.pem)</h5>
+                                </label>
+                                <input class="form-control" type="file" id="certificateInput" />
+                            </div>
+                        </div>
+                    </div>
+                    </div>
                 <div class="row-cols-md-6 text-center mt-3">
-                    <button onclick="verify()" class="btn btn-primary">Verify</button>
+                    <button onclick="verify()" class="btn btn-primary" style="margin-bottom: 20px;">Verify</button>
                 </div>
             </div>
+        </div>
+
+        <div class="card mt-4">
+
         </div>
     </div>
 
