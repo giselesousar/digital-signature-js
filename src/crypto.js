@@ -104,7 +104,14 @@ async function signFileWithPrivateKey(file, privateKey, hashAlgorithm) {
     }
 }
 
-async function verifySignature(file, signature, certificate, hashAlgorithm) {
+/**
+ * 
+ * @param {*} options object with file to verify, signature, certificate x.509,
+ * hash algotithm used to sign, padding if rsa, salt lenght and encoding scheme
+ * @returns 
+ */
+
+async function verifySignature(file, signature, certificate, hashAlgorithm, saltLength, encodingScheme) {
 
     file = await readFileAsync(file);
 
@@ -123,9 +130,18 @@ async function verifySignature(file, signature, certificate, hashAlgorithm) {
         md = createHash(hashAlgorithm);
         md.update(file, "utf8");
 
+        let decoded = null;
+
+        switch(encodingScheme) {
+            case 'base64':
+                decoded = forge.util.decode64(sig);
+            case 'utf8':
+                decoded = forge.util.decodeUtf8(sig);
+        }
+
         let verified = certFromPem.publicKey.verify(
             md.digest().getBytes(),
-            forge.util.decode64(sig),
+            decoded,
             pss
         );
 

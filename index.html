@@ -80,43 +80,21 @@
                 </div>
               </div>
 
-              <div class="btn-group mb-3">
-                <button type="button" class="btn btn-light" disabled>
-                  Key size
-                </button>
-                <div class="dropdown">
-                  <button
-                    class="btn btn-outline-light text-dark dropdown-toggle"
-                    type="button"
-                    id="dropdownMenuButton1"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    1024 bit
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a class="dropdown-item" data-value="512" href="#"
-                        >512 bit</a
-                      >
-                    </li>
-                    <li>
-                      <a class="dropdown-item" data-value="1024" href="#"
-                        >1024 bit</a
-                      >
-                    </li>
-                    <li>
-                      <a class="dropdown-item" data-value="2048" href="#"
-                        >2048 bit</a
-                      >
-                    </li>
-                    <li>
-                      <a class="dropdown-item" data-value="4096" href="#"
-                        >4096 bit</a
-                      >
-                    </li>
-                  </ul>
-                </div>
+              <div class="row">
+                  <div class="col-md-6">
+                    <button type="button" class="btn btn-light" disabled>
+                        Key size
+                      </button>
+                  </div>
+                  <div class="col-md-6">
+                    <select class="form-select form-select-sm" aria-label="Default select example">
+                        <option selected>512 bit</option>
+                        <option value="1">1024 bit</option>
+                        <option value="2">2048 bit</option>
+                        <option value="3">4096 bit</option>
+                      </select>
+                  </div>
+                
               </div>
 
               <button
